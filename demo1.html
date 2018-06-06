@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="Generator" content="EditPlus®">
+  <meta name="Author" content="">
+  <meta name="Keywords" content="">
+  <meta name="Description" content="">
+  <title>烟花效果</title>
+  <style>
+	*{margin:0;padding:0;}
+	body{
+		background:black;
+		overflow:hidden;
+	}
+	.fireworks{
+		width:10px;
+		height:25px;
+		border-radius:50%;
+		background:red;
+		position:absolute;
+	}
+	.fires{
+		position:absolute;
+		width:6px;
+		height:6px;
+		border-radius:50%;
+		background:red;
+	}
+  </style>
+ </head>
+ <body>
+ <script>
+	//给整个文档绑定点击事件
+	document.onclick = function(e){
+		//console.log(this)
+		//console.log(arguments)
+		//console.log(e)
+		var x = e.clientX,
+			y = e.clientY;
+			h = window.innerHeight;
+			fireworks(x,y,h);
+	}
+	
+	var time = null;//储存定时器
+
+	//生成一个div并插入body中...
+	function fireworks(x,y,h){
+		var div = document.createElement("div");
+		div.className="fireworks";
+		document.body.appendChild(div);
+		div.style.left=x+"px";
+		div.style.top=h+"px";
+		div.style.background = color1();
+		var speed = 10;
+		time = setInterval(function(){
+			div.style.top = div.offsetTop - speed + "px";
+			if(div.offsetTop <= y){
+				clearInterval(time);//当top值到达鼠标的y值时清除定时器
+				document.body.removeChild(div);//当top值到达鼠标的y值时移除div
+				generate(x,y,h);//生成烟花
+			}
+		},1000/60)
+	}
+
+	//生成烟花
+	function generate(x,y,h){
+		var n = Math.ceil(Math.random()*50+88)//随机个数
+		var fires = [];
+		for (var i=0;i<n ;i++ )
+		{
+			fires[i] = document.createElement("div");
+			fires[i].className = "fires";
+			fires[i].style.left = x + "px";
+			fires[i].style.top = y + "px";
+			fires[i].style.background = color1();
+			//给每个烟花粒子一个随机速度
+			fires[i].speedX = Math.random()*20-10;// -10~10
+			fires[i].speedY = Math.random()*20-10;
+			document.body.appendChild(fires[i])
+		}
+		setInterval(function(){
+			for ( var j=0;j<n ;j++ )
+			{
+				fires[j].style.left = fires[j].offsetLeft + fires[j].speedX + "px"
+				fires[j].style.top = fires[j].offsetTop + fires[j].speedY + "px"
+				fires[j].speedY += 0.6;
+				// 对烟花粒子的范围控制
+				if(fires[j].offsetLeft < 0 || fires[j].offsetLeft > window.innerWidth || fires[j].offsetTop > h){
+					document.body.removeChild(fires[j])
+				}
+			}
+		},1000/60);
+	}
+
+	// 生成随机颜色
+	// 方法1 rgb 0-255
+	function color1(){
+		var r = Math.floor(Math.random()*256);
+		var g = Math.floor(Math.random()*256);
+		var b = Math.floor(Math.random()*256);
+		return "rgb("+r+","+g+","+b+")"
+	}
+	color1()
+ </script>
+ </body>
+</html>
